@@ -31,61 +31,61 @@ ADD shared/bin/zeek_install_plugins.sh /usr/local/bin/
 # ADD zeek/patches ${ZEEK_PATCH_DIR}
 
 RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list && \
-      echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
-      apt-get -q update && \
-      apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
-      bash -c "curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -" && \
-      echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
-    apt-get -q update && \
-    apt-get install -q -y -t buster-backports --no-install-recommends \
-        binutils \
-        ccache \
-        clang-${LLVM_VERSION} \
-        file \
-        flex \
-        git \
-        google-perftools \
-        jq \
-        libclang-${LLVM_VERSION}-dev \
-        libfl-dev \
-        libgoogle-perftools-dev \
-        libkrb5-dev \
-        libmaxminddb-dev \
-        libpcap0.8-dev \
-        libssl-dev \
-        llvm-${LLVM_VERSION}-dev \
-        locales-all \
-        make \
-        ninja-build \
-        patch \
-        python3 \
-        python3-dev \
-        python3-pip \
-        python3-setuptools \
-        python3-wheel \
-        swig \
-        zlib1g-dev && \
+  echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
+  apt-get -q update && \
+  apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
+  bash -c "curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -" && \
+  echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
+  apt-get -q update && \
+  apt-get install -q -y -t buster-backports --no-install-recommends \
+  binutils \
+  ccache \
+  clang-${LLVM_VERSION} \
+  file \
+  flex \
+  git \
+  google-perftools \
+  jq \
+  libclang-${LLVM_VERSION}-dev \
+  libfl-dev \
+  libgoogle-perftools-dev \
+  libkrb5-dev \
+  libmaxminddb-dev \
+  libpcap0.8-dev \
+  libssl-dev \
+  llvm-${LLVM_VERSION}-dev \
+  locales-all \
+  make \
+  ninja-build \
+  patch \
+  python3 \
+  python3-dev \
+  python3-pip \
+  python3-setuptools \
+  python3-wheel \
+  swig \
+  zlib1g-dev && \
   pip3 install --no-cache-dir zkg btest pre-commit && \
   mkdir -p "${CMAKE_DIR}" && \
-    curl -sSL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" | tar xzf - -C "${CMAKE_DIR}" --strip-components 1 && \
+  curl -sSL "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz" | tar xzf - -C "${CMAKE_DIR}" --strip-components 1 && \
   cd "${SRC_BASE_DIR}" && \
-    curl -sSL "https://ftp.gnu.org/gnu/bison/bison-${BISON_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
-    cd "./bison-${BISON_VERSION}" && \
-    ./configure --prefix=/usr && \
-    make && \
-    make install && \
+  curl -sSL "https://ftp.gnu.org/gnu/bison/bison-${BISON_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
+  cd "./bison-${BISON_VERSION}" && \
+  ./configure --prefix=/usr && \
+  make && \
+  make install && \
   cd "${SRC_BASE_DIR}" && \
-    curl -sSL "https://old.zeek.org/downloads/zeek-${ZEEK_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
-    cd "./zeek-${ZEEK_VERSION}" && \
-    bash -c "for i in ${ZEEK_PATCH_DIR}/* ; do patch -p 1 -r - --no-backup-if-mismatch < \$i || true; done" && \
-    ./configure --prefix="${ZEEK_DIR}" --generator=Ninja --ccache --enable-perftools && \
-    cd build && \
-    ninja && \
-    ninja install && \
-    zkg autoconfig && \
-    bash /usr/local/bin/zeek_install_plugins.sh && \
-    bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rf '{}' \; 2>/dev/null || true" && \
-    bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep 'ELF 64-bit' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
+  curl -sSL "https://old.zeek.org/downloads/zeek-${ZEEK_VERSION}.tar.gz" | tar xzf - -C "${SRC_BASE_DIR}" && \
+  cd "./zeek-${ZEEK_VERSION}" && \
+  bash -c "for i in ${ZEEK_PATCH_DIR}/* ; do patch -p 1 -r - --no-backup-if-mismatch < \$i || true; done" && \
+  ./configure --prefix="${ZEEK_DIR}" --generator=Ninja --ccache --enable-perftools && \
+  cd build && \
+  ninja && \
+  ninja install && \
+  zkg autoconfig && \
+  bash /usr/local/bin/zeek_install_plugins.sh && \
+  bash -c "find ${ZEEK_DIR}/lib -type d -name CMakeFiles -exec rm -rf '{}' \; 2>/dev/null || true" && \
+  bash -c "file ${ZEEK_DIR}/{lib,bin}/* ${ZEEK_DIR}/lib/zeek/plugins/packages/*/lib/* ${ZEEK_DIR}/lib/zeek/plugins/*/lib/* ${SPICY_DIR}/{lib,bin}/* ${SPICY_DIR}/lib/spicy/Zeek_Spicy/lib/* | grep 'ELF 64-bit' | sed 's/:.*//' | xargs -l -r strip -v --strip-unneeded"
 
 FROM debian:buster-slim
 
@@ -117,46 +117,46 @@ COPY --from=build ${ZEEK_DIR} ${ZEEK_DIR}
 COPY --from=build ${SPICY_DIR} ${SPICY_DIR}
 
 RUN sed -i "s/buster main/buster main contrib non-free/g" /etc/apt/sources.list && \
-      echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
-      apt-get -q update && \
-      apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
-      bash -c "curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -" && \
-      echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
-    apt-get -q update && \
-    apt-get install -q -y -t buster-backports --no-install-recommends \
-      binutils \
-      file \
-      git \
-      libatomic1 \
-      libclang-${LLVM_VERSION}-dev \
-      libclang-cpp${LLVM_VERSION} \
-      libclang-cpp${LLVM_VERSION}-dev \
-      libclang1-${LLVM_VERSION} \
-      libgoogle-perftools4 \
-      libkrb5-3 \
-      libmaxminddb0 \
-      libpcap0.8 \
-      libpcap0.8-dev \
-      libssl1.0 \
-      libtcmalloc-minimal4 \
-      libunwind8 \
-      libzmq5 \
-      llvm-${LLVM_VERSION} \
-      procps \
-      psmisc \
-      python \
-      python3 \
-      python3-pip \
-      python3-setuptools \
-      python3-wheel \
-      supervisor \
-      vim-tiny && \
-    pip3 install --no-cache-dir pyzmq && \
-    bash -c "( find /opt/zeek/ -type l ! -exec test -r {} \; -print | xargs -r -l rm -vf ) || true" && \
-    apt-get -q -y --purge remove libssl-dev && \
-      apt-get -q -y autoremove && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  echo "deb http://deb.debian.org/debian buster-backports main" >> /etc/apt/sources.list && \
+  apt-get -q update && \
+  apt-get install -q -y --no-install-recommends gnupg2 curl ca-certificates && \
+  bash -c "curl -sSL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -" && \
+  echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list && \
+  apt-get -q update && \
+  apt-get install -q -y -t buster-backports --no-install-recommends \
+  binutils \
+  file \
+  git \
+  libatomic1 \
+  libclang-${LLVM_VERSION}-dev \
+  libclang-cpp${LLVM_VERSION} \
+  libclang-cpp${LLVM_VERSION}-dev \
+  libclang1-${LLVM_VERSION} \
+  libgoogle-perftools4 \
+  libkrb5-3 \
+  libmaxminddb0 \
+  libpcap0.8 \
+  libpcap0.8-dev \
+  libssl1.0 \
+  libtcmalloc-minimal4 \
+  libunwind8 \
+  libzmq5 \
+  llvm-${LLVM_VERSION} \
+  procps \
+  psmisc \
+  python \
+  python3 \
+  python3-pip \
+  python3-setuptools \
+  python3-wheel \
+  supervisor \
+  vim-tiny && \
+  pip3 install --no-cache-dir pyzmq && \
+  bash -c "( find /opt/zeek/ -type l ! -exec test -r {} \; -print | xargs -r -l rm -vf ) || true" && \
+  apt-get -q -y --purge remove libssl-dev && \
+  apt-get -q -y autoremove && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # add configuration and scripts
 ADD shared/bin/docker-uid-gid-setup.sh /usr/local/bin/
@@ -175,11 +175,11 @@ ENV ZEEK_THIRD_PARTY_PLUGINS_COUNT 22
 ENV ZEEK_THIRD_PARTY_GREP_STRING "(spicy/main|Bro_LDAP/scripts/main|Corelight/PE_XOR/main|Salesforce/GQUIC/main|Zeek_AF_Packet/scripts/init|bzar/main|cve-2020-0601/cve-2020-0601|cve-2020-13777/cve-2020-13777|hassh/hassh|ja3/ja3|zeek-community-id/main|zeek-EternalSafety/main|zeek-httpattacks/main|zeek-plugin-bacnet/main|zeek-plugin-enip/main|zeek-plugin-profinet/main|zeek-plugin-s7comm/main|zeek-plugin-tds/main|zeek-sniffpass/main|CVE-2020-1350|ripple20|callstranger)\.(zeek|bro)"
 
 RUN mkdir -p /tmp/logs && \
-    cd /tmp/logs && \
-      $ZEEK_DIR/bin/zeek -C -r /tmp/pcaps/udp.pcap local policy/misc/loaded-scripts 2>/dev/null && \
-      bash -c "(( $(grep -cP "$ZEEK_THIRD_PARTY_GREP_STRING" loaded_scripts.log) == $ZEEK_THIRD_PARTY_PLUGINS_COUNT)) && echo 'Zeek plugins loaded correctly' || (echo 'One or more Zeek plugins did not load correctly' && cat loaded_scripts.log && exit 1)" && \
-      cd /tmp && \
-      rm -rf /tmp/logs /tmp/pcaps
+  cd /tmp/logs && \
+  $ZEEK_DIR/bin/zeek -C -r /tmp/pcaps/udp.pcap local policy/misc/loaded-scripts 2>/dev/null && \
+  bash -c "(( $(grep -cP "$ZEEK_THIRD_PARTY_GREP_STRING" loaded_scripts.log) == $ZEEK_THIRD_PARTY_PLUGINS_COUNT)) && echo 'Zeek plugins loaded correctly' || (echo 'One or more Zeek plugins did not load correctly' && cat loaded_scripts.log && exit 1)" && \
+  cd /tmp && \
+  rm -rf /tmp/logs /tmp/pcaps
 
 #Whether or not to auto-tag logs based on filename
 ARG AUTO_TAG=true
@@ -229,9 +229,9 @@ ENV ZEEK_DISABLE_WIREGUARD $ZEEK_DISABLE_WIREGUARD
 ENV ZEEK_DISABLE_WIREGUARD_TRANSPORT_PACKETS $ZEEK_DISABLE_WIREGUARD_TRANSPORT_PACKETS
 
 RUN groupadd --gid ${DEFAULT_GID} ${PUSER} && \
-    useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
-    usermod -a -G tty ${PUSER} && \
-    ln -sfr /usr/local/bin/pcap_moloch_and_zeek_processor.py /usr/local/bin/pcap_zeek_processor.py
+  useradd -M --uid ${DEFAULT_UID} --gid ${DEFAULT_GID} --home /nonexistant ${PUSER} && \
+  usermod -a -G tty ${PUSER} && \
+  ln -sfr /usr/local/bin/pcap_moloch_and_zeek_processor.py /usr/local/bin/pcap_zeek_processor.py
 
 ENTRYPOINT ["/usr/local/bin/docker-uid-gid-setup.sh"]
 
@@ -246,3 +246,17 @@ ARG VCS_REVISION
 LABEL org.opencontainers.image.created=$BUILD_DATE
 LABEL org.opencontainers.image.version=$MALCOLM_VERSION
 LABEL org.opencontainers.image.revision=$VCS_REVISION
+
+RUN apt-get update && \
+  apt-get install -q -y --no-install-recommends libpcap-dev \
+  openssl \
+  bind9 \
+  binpac \
+  bash \
+  cmake \
+  make \
+  gcc \
+  swig \
+  bison \
+  flex \
+  zlib1g

@@ -156,3 +156,11 @@ if /opt/zeek/bin/zeek -N | grep -q Zeek::Spicy; then
     cd "$CWD"
   fi
 fi
+
+SRC_DIR="$(clone_github_repo "https://github.com/Cyber-Gurus/ebsap-plugin.git")"
+if [[ -d "$SRC_DIR" ]]; then
+  cd "$SRC_DIR" && \
+  ./configure --zeek-dist="$ZEEK_DIST_DIR" && \
+  make && \
+  export ZEEK_PLUGIN_PATH="$SRC_DIR"
+fi
